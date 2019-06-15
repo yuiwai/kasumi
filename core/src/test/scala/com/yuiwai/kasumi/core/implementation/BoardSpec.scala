@@ -2,6 +2,8 @@ package com.yuiwai.kasumi.core.implementation
 
 import utest._
 
+import scala.util.chaining._
+
 object BoardSpec extends TestSuite {
   val tests = Tests {
     val board = Board.empty
@@ -46,6 +48,14 @@ object BoardSpec extends TestSuite {
       "complex" - {
         (board ~ (0, 1) ~ (1, 2) ~ (2, 3) ~ (1, 4) ~ (4, 3))
           .routes(0, 3) ==> Set(Route(0 -> 1, 1 -> 2, 2 -> 3), Route(0 -> 1, 1 -> 4, 4 -> 3))
+      }
+      "with condition" - {
+        (board ~ (2, 3) ~ (3, 4) ~ (2, 6) ~ (6, 8) ~ (8, 4)).tap { b =>
+          b.routes(2, 4, e => e.from.value.asInstanceOf[Int] % 2 == 0) ==>
+            Set(Route(2 -> 6, 6 -> 8, 8 -> 4))
+          b.route(2, 4, e => e.from.value.asInstanceOf[Int] % 2 == 0) ==>
+            Some(Route(2 -> 6, 6 -> 8, 8 -> 4))
+        }
       }
     }
   }

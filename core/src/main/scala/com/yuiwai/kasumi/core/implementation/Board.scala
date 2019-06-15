@@ -2,6 +2,8 @@ package com.yuiwai.kasumi.core.implementation
 
 import com.yuiwai.kasumi.core.concept.{BoardOps, EdgeOps, NodeOps, RouteOps}
 
+import scala.util.chaining._
+
 final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, Route] {
   override def nodes: Set[Node[_]] = edges.flatMap(_.nodes)
   override def +(edge: Edge): Board = copy(edges + edge)
@@ -12,8 +14,9 @@ final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, 
         case Edge(`value`, to) => (fs, ts + to)
         case _ => acc
       }
-    }
-    Board(Set(Edge(Node(0), Node(2))))
+    }.pipe { case (ns1, ns2) =>
+      edges.filterNot(e => e.from == value || e.to == value) ++ ns1.flatMap(f => ns2.map(t => Edge(f, t)))
+    }.pipe(es => Board(es))
   }
 
 }
@@ -40,6 +43,7 @@ object Edge {
 
 sealed case class Route(head: Edge, rest: Seq[Edge]) extends RouteOps[Route, Node[_], Edge] {
   def length: Int = rest.length + 1
+  def headValue[T]: T = head.from.value.asInstanceOf[T]
   override def tail: Route = {
     require(rest.nonEmpty)
     copy(rest.head, rest.tail)
@@ -69,7 +73,7 @@ sealed case class Route(head: Edge, rest: Seq[Edge]) extends RouteOps[Route, Nod
 }
 object EmptyRoute extends Route(EmptyEdge, Seq.empty) {
   override def length: Int = 0
-  override def nodes: Set[Node[_]] = Set.empty
+  override def nodes: Seq[Node[_]] = Seq.empty
   override def last: Option[Node[_]] = None
   override def +(edge: Edge): Option[Route] = Some(Route(edge))
   override def -->(node: Node[_]): Option[Route] = None
