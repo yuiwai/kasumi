@@ -15,7 +15,9 @@ final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, 
         case _ => acc
       }
     }.pipe { case (ns1, ns2) =>
-      edges.filterNot(e => e.from == value || e.to == value) ++ ns1.flatMap(f => ns2.map(t => Edge(f, t)))
+      edges.filterNot(e => e.from == value || e.to == value) ++ ns1.flatMap(f => ns2.collect {
+        case t if f != t => Edge(f, t)
+      })
     }.pipe(es => Board(es))
   }
 

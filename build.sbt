@@ -37,3 +37,7 @@ lazy val visualize = project
   )
   .dependsOn(stationsJS)
   .enablePlugins(ScalaJSPlugin)
+
+lazy val cli = project
+  .in(file("cli"))
+  .dependsOn(stationsJVM)
