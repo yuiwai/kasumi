@@ -45,7 +45,8 @@ object Edge {
 
 sealed case class Route(head: Edge, rest: Seq[Edge]) extends RouteOps[Route, Node[_], Edge] {
   def length: Int = rest.length + 1
-  def headValue[T]: T = head.from.value.asInstanceOf[T]
+  def headFromValue[T]: T = head.from.value.asInstanceOf[T]
+  def headToValue[T]: T = head.to.value.asInstanceOf[T]
   override def tail: Route = {
     require(rest.nonEmpty)
     copy(rest.head, rest.tail)

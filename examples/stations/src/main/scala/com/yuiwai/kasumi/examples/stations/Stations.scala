@@ -80,8 +80,11 @@ object Data {
   def edgeOfLine(lineName: String)(edge: Edge): Boolean =
     edge.from.value.asInstanceOf[Station].line == lineName &&
       edge.to.value.asInstanceOf[Station].line == lineName
-  def line(name: String): Option[Route] = lines.get(name).
-    flatMap(l => stations.route(Station(name, l.head), Station(name, l.last), edgeOfLine(name)))
+  def line(name: String): Option[Route] = {
+    implicit val searcher: BFS.type = BFS
+    lines.get(name).
+      flatMap(l => stations.route(Station(name, l.head), Station(name, l.last), edgeOfLine(name)))
+  }
   lazy val stations: Board = lines.foldLeft(Board.empty) { case (board, (lineName, sts)) =>
     sts.sliding(2).foldLeft(board) { (acc, xs) =>
       xs match {

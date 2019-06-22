@@ -60,7 +60,7 @@ object View {
           drawStation(
             subContainer,
             s,
-            isCurrent = stationName.getOrElse(l.headValue[Station].name) == s.name
+            isCurrent = stationName.getOrElse(l.headFromValue[Station].name) == s.name
           )
         }
     }
