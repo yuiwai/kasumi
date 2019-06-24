@@ -14,6 +14,7 @@ object Cli {
       .filter(n => xs.edges.count(e => e.from == n) == 2)
       .pipe(_.foldLeft(xs)((acc, x) => acc.splice(x)))
       .pipe(_.nodes.map(_.value.asInstanceOf[Station].name))
+      .tap(println)
 
     xs.route(Station("東京メトロ銀座線", "渋谷"), Station("千葉都市モノレール2号線", "動物公園"))
       .map(r => r.headFromValue[Station].name :: r.headToValue[Station].name :: r.rest.map(_.to.value.asInstanceOf[Station].name).toList)
