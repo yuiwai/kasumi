@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 version in ThisBuild := "0.1"
 scalaVersion in ThisBuild := "2.13.0"
-scalacOptions ++= Seq("-feature")
+scalacOptions in ThisBuild ++= Seq("-feature")
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
@@ -41,3 +41,16 @@ lazy val visualize = project
 lazy val cli = project
   .in(file("cli"))
   .dependsOn(stationsJVM)
+
+lazy val layout = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(
+    name := "kasumi-layout",
+    testFrameworks += new TestFramework("utest.runner.Framework"),
+    libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.9" % "test"
+  )
+  .in(file("layout"))
+  .dependsOn(core)
+
+lazy val layoutJS = layout.js
+lazy val layoutJVM = layout.jvm
