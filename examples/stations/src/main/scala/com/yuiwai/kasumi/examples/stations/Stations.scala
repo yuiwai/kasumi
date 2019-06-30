@@ -125,7 +125,7 @@ object Data {
   def line(name: String): Option[Route] = {
     implicit val searcher: BFS.type = BFS
     lines.get(name).
-      flatMap(l => stations.route(Station(name, l.head), Station(name, l.last), edgeOfLine(name)))
+      flatMap(l => stations.route(BFS, Station(name, l.head), Station(name, l.last), edgeOfLine(name)))
   }
   lazy val stations: Board = lines.foldLeft(Board.empty) { case (board, (lineName, sts)) =>
     sts.sliding(2).foldLeft(board) { (acc, xs) =>
@@ -138,5 +138,18 @@ object Data {
         case (acc, ((l1, s1), (l2, s2))) => acc ~ (Station(l1, s1), Station(l2, s2))
       }
     }
+  }
+  lazy val stationsTyped: TypedBoard[Station] = lines.foldLeft(TypedBoard.empty[Station]) {
+    case (board, (lineName, sts)) =>
+      sts.sliding(2).foldLeft(board) { (acc, xs) =>
+        xs match {
+          case h :: t :: Nil => acc ~ (Station(lineName, h), Station(lineName, t))
+          case _ => acc
+        }
+      }.pipe { board =>
+        connections.foldLeft(board) {
+          case (acc, ((l1, s1), (l2, s2))) => acc ~ (Station(l1, s1), Station(l2, s2))
+        }
+      }
   }
 }

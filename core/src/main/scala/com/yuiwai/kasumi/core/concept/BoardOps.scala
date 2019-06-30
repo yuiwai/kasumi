@@ -1,6 +1,9 @@
 package com.yuiwai.kasumi.core.concept
 
-trait BoardOps[This <: BoardOps[This, N, E, R], N <: NodeOps[_], E <: EdgeOps[E, N], R <: RouteOps[R, N, E]] {
+trait BoardOps[N <: NodeOps[_]] {
+  type This <: BoardOps[N]
+  type E <: EdgeOps[N]
+  type R <: RouteOps[N]
   type GenEdge[F, T] = (F, T) => E
   type Condition = E => Boolean
   def nodes: Set[N]
@@ -9,24 +12,26 @@ trait BoardOps[This <: BoardOps[This, N, E, R], N <: NodeOps[_], E <: EdgeOps[E,
   def filter(f: E => Boolean): This = remapFilter(e => Some(e).filter(f))
   def +(edge: E): This
   def +[F, T](from: F, to: T)(implicit genEdge: GenEdge[F, T]): This = this + genEdge(from, to)
-  def ~(edge: E): This = (this + edge).asInstanceOf[this.type] + edge.flipped
+  def ~(edge: E): This = (this + edge).asInstanceOf[this.type] + edge.flipped.asInstanceOf[E]
   def ~[F, T](from: F, to: T)(implicit genEdge: GenEdge[F, T]): This = this ~ genEdge(from, to)
-  def route[F, T](from: F, to: T, condition: Condition = _ => true)
-    (implicit searcher: SearchOps[This, N, E, R], genNodeF: F => N, genNodeT: T => N): Option[R] =
-    searcher.search(this.asInstanceOf[This], from, to, condition)
+  def splice(node: N): This
+  def route(searcher: SearchOps[N], from: N, to: N, condition: Condition = _ => true): Option[R]
 }
 trait NodeOps[+V] {
   def value: V
   def show: String = value.toString
 }
-trait EdgeOps[This, N <: NodeOps[_]] {
+trait EdgeOps[N <: NodeOps[_]] {
+  type This <: EdgeOps[N]
   def from: N
   def to: N
   def nodes: Set[N] = Set(from, to)
   def flipped: This
   def show: String = s"""(${from.show}, ${to.show})"""
 }
-trait RouteOps[This, N <: NodeOps[_], E <: EdgeOps[E, N]] {
+trait RouteOps[N <: NodeOps[_]] {
+  type This <: RouteOps[N]
+  type E <: EdgeOps[N]
   def head: E
   def tail: This
   def last: Option[N]

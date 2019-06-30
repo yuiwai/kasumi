@@ -1,10 +1,13 @@
 package com.yuiwai.kasumi.core.implementation
 
-import com.yuiwai.kasumi.core.concept.{BoardOps, EdgeOps, NodeOps, RouteOps}
+import com.yuiwai.kasumi.core.concept._
 
 import scala.util.chaining._
 
-final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, Route] {
+final case class Board(edges: Set[Edge]) extends BoardOps[Node[_]] {
+  override type This = Board
+  override type E = Edge
+  override type R = Route
   override def nodes: Set[Node[_]] = edges.flatMap(_.nodes)
   override def remapFilter(f: Edge => Option[Edge]): Board = Board(edges.flatMap(f))
   override def +(edge: Edge): Board = copy(edges + edge)
@@ -21,6 +24,10 @@ final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, 
       })
     }.pipe(es => Board(es))
   }
+  override def route(searcher: SearchOps[Node[_]], from: Node[_], to: Node[_], condition: Condition): Option[Route] =
+    searcher
+      .search(this.asInstanceOf[searcher.B], from, to, condition.asInstanceOf[searcher.Condition])
+      .map(_.asInstanceOf[this.R])
 }
 object Board {
   def empty: Board = apply(Set.empty)
@@ -33,7 +40,8 @@ object Node {
   implicit val genNode: Any => Node[_] = v => apply(v)
   def empty: NodeOps[Nothing] = EmptyNode
 }
-sealed case class Edge(from: Node[_], to: Node[_]) extends EdgeOps[Edge, Node[_]] {
+sealed case class Edge(from: Node[_], to: Node[_]) extends EdgeOps[Node[_]] {
+  override type This = Edge
   override def flipped: Edge = Edge(to, from)
 }
 object EmptyEdge extends Edge(EmptyNode, EmptyNode)
@@ -43,7 +51,9 @@ object Edge {
   def apply[F, T](from: F, to: T): Edge = apply(Node(from), Node(to))
 }
 
-sealed case class Route(head: Edge, rest: Seq[Edge]) extends RouteOps[Route, Node[_], Edge] {
+sealed case class Route(head: Edge, rest: Seq[Edge]) extends RouteOps[Node[_]] {
+  override type This = Route
+  override type E = Edge
   def length: Int = rest.length + 1
   def headFromValue[T]: T = head.from.value.asInstanceOf[T]
   def headToValue[T]: T = head.to.value.asInstanceOf[T]

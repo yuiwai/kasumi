@@ -1,6 +1,6 @@
 package com.yuiwai.kasumi.core.concept
 
-trait BrokerOps[This, N <: NodeOps[_], E <: EdgeOps[E, N], P <: PayloadOps[P, _, N, E, _]] {
+trait BrokerOps[This, N <: NodeOps[_], E <: EdgeOps[N], P <: PayloadOps[P, _, N, E, _]] {
   def payloads: Seq[P]
   def size: Int = payloads.size
   def +(payload: P): This
@@ -8,7 +8,7 @@ trait BrokerOps[This, N <: NodeOps[_], E <: EdgeOps[E, N], P <: PayloadOps[P, _,
   def update(): This = update(p => p)
 }
 
-trait PayloadOps[This, V, N <: NodeOps[_], E <: EdgeOps[E, N], R <: RouteOps[R, N, E]] {
+trait PayloadOps[This, V, N <: NodeOps[_], E <: EdgeOps[N], R <: RouteOps[N]] {
   def isReached: Boolean = pos match {
     case Left(n) => n == route.head.to
     case _ => false

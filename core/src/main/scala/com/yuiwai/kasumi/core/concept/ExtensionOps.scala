@@ -12,7 +12,7 @@ trait NodeExtension[N <: NodeOps[_]] extends ExtensionOps with ExtensionPlace {
   def node: N
 }
 
-trait EdgeExtension[E <: EdgeOps[E, _]] extends ExtensionOps with ExtensionPlace {
+trait EdgeExtension[E <: EdgeOps[_]] extends ExtensionOps with ExtensionPlace {
   def edge: E
 }
 

@@ -25,35 +25,35 @@ object BoardSpec extends TestSuite {
         .edges ==> Set(Edge(Node(0), Node(2)))
     }
     "route" - {
-      implicit val searcher: SearchOps[Board, Node[_], Edge, Route] = BFS
       "empty board" - {
-        board.route(0, 1) ==> None
+        board.route(BFS, 0, 1) ==> None
       }
+
       "single edge" - {
         (board + (0, 1))
-          .route(0, 1) ==> Some(Route(0 -> 1))
+          .route(BFS, 0, 1) ==> Some(Route(0 -> 1))
       }
       "straight edges" - {
         (board + (0, 1) + (1, 2))
-          .route(0, 2) ==> Some(Route(0 -> 1, 1 -> 2))
+          .route(BFS, 0, 2) ==> Some(Route(0 -> 1, 1 -> 2))
       }
       "fan-in/fan-out" - {
         (board + (0, 1) + (1, 2) + (0, 2))
-          .route(0, 2) ==> Some(Route(0 -> 2))
+          .route(BFS, 0, 2) ==> Some(Route(0 -> 2))
         (board + (0, 1) + (1, 2) + (2, 3) + (1, 4))
-          .route(1, 3) ==> Some(Route(1 -> 2, 2 -> 3))
+          .route(BFS, 1, 3) ==> Some(Route(1 -> 2, 2 -> 3))
       }
       "bidirectional" - {
         (board ~ (0, 1) ~ (1, 2))
-          .route(0, 2) ==> Some(Route(0 -> 1, 1 -> 2))
+          .route(BFS, 0, 2) ==> Some(Route(0 -> 1, 1 -> 2))
       }
       "complex" - {
         (board ~ (0, 1) ~ (1, 2) ~ (2, 3) ~ (1, 4) ~ (4, 3))
-          .route(0, 3).get.length ==> 3
+          .route(BFS, 0, 3).get.length ==> 3
       }
       "with condition" - {
         (board ~ (2, 3) ~ (3, 4) ~ (2, 6) ~ (6, 8) ~ (8, 4)).tap { b =>
-          b.route(2, 4, e => e.from.value.asInstanceOf[Int] % 2 == 0) ==>
+          b.route(BFS, 2, 4, e => e.from.value.asInstanceOf[Int] % 2 == 0) ==>
             Some(Route(2 -> 6, 6 -> 8, 8 -> 4))
         }
       }
