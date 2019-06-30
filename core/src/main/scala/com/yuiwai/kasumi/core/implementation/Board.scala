@@ -6,6 +6,7 @@ import scala.util.chaining._
 
 final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, Route] {
   override def nodes: Set[Node[_]] = edges.flatMap(_.nodes)
+  override def remapFilter(f: Edge => Option[Edge]): Board = Board(edges.flatMap(f))
   override def +(edge: Edge): Board = copy(edges + edge)
   def splice(value: Node[_]): Board = {
     edges.foldLeft(Set.empty[Node[_]] -> Set.empty[Node[_]]) { case (acc@(fs, ts), e) =>
@@ -20,7 +21,6 @@ final case class Board(edges: Set[Edge]) extends BoardOps[Board, Node[_], Edge, 
       })
     }.pipe(es => Board(es))
   }
-
 }
 object Board {
   def empty: Board = apply(Set.empty)

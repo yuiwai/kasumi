@@ -5,6 +5,8 @@ trait BoardOps[This <: BoardOps[This, N, E, R], N <: NodeOps[_], E <: EdgeOps[E,
   type Condition = E => Boolean
   def nodes: Set[N]
   def edges: Set[E]
+  def remapFilter(f: E => Option[E]): This
+  def filter(f: E => Boolean): This = remapFilter(e => Some(e).filter(f))
   def +(edge: E): This
   def +[F, T](from: F, to: T)(implicit genEdge: GenEdge[F, T]): This = this + genEdge(from, to)
   def ~(edge: E): This = (this + edge).asInstanceOf[this.type] + edge.flipped

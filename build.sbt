@@ -15,10 +15,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
 lazy val coreJS = core.js
 lazy val coreJVM = core.jvm
 
-lazy val demo = project
-  .in(file("demo"))
-  .dependsOn(coreJVM)
-
 lazy val stations = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("examples/stations"))
