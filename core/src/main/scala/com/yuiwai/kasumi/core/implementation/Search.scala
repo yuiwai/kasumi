@@ -28,7 +28,9 @@ trait BFSImpl extends SearchOps[Node[_]] {
     case Edge(f, _) :: _ => routeFromVisited(visited, Edge(visited(f), f) :: edges)
   }
 }
-object BFS extends BFSImpl
+object BFS extends BFSImpl {
+  def typed[V]: TypedBFSImpl[V] = new TypedBFSImpl[V] {}
+}
 
 trait TypedBFSImpl[V] extends TypedSearchOps[NodeOps[V], V] {
   override type B = TypedBoard[V]

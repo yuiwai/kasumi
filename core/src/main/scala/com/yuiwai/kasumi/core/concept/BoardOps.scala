@@ -9,7 +9,7 @@ trait BoardOps[N <: NodeOps[_]] {
   def nodes: Set[N]
   def edges: Set[E]
   def remapFilter(f: E => Option[E]): This
-  def filter(f: E => Boolean): This = remapFilter(e => Some(e).filter(f))
+  def filter(f: E => Boolean): This
   def +(edge: E): This
   def +[F, T](from: F, to: T)(implicit genEdge: GenEdge[F, T]): This = this + genEdge(from, to)
   def ~(edge: E): This = (this + edge).asInstanceOf[this.type] + edge.flipped.asInstanceOf[E]

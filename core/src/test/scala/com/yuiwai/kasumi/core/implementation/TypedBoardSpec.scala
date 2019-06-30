@@ -1,6 +1,5 @@
 package com.yuiwai.kasumi.core.implementation
 
-import com.yuiwai.kasumi.core.concept.SearchOps
 import utest._
 
 import scala.util.chaining._
@@ -15,6 +14,11 @@ object TypedBoardSpec extends TestSuite {
       val b = board ~ (0, 1)
       b.edges.size ==> 2
       b.nodes.size ==> 2
+    }
+    "filter" - {
+      board ~ (0, 1) + (1, 2) + (1, 3) tap {
+        _.filter(_.fromV != 1).edges ==> Set(TypedEdge(0, 1))
+      }
     }
     "splice" - {
       (board + (0, 1))

@@ -9,6 +9,7 @@ final case class TypedBoard[V](edges: Set[TypedEdge[V]]) extends TypedBoardOps[V
   override type E = TypedEdge[V]
   override type R = TypedRoute[V]
   override def nodes: Set[NodeOps[V]] = edges.flatMap(_.nodes)
+  def nodesV: Set[Node[V]] = nodes.map(_.asInstanceOf[Node[V]])
   override def remapFilter(f: TypedEdge[V] => Option[TypedEdge[V]]): TypedBoard[V] = ???
   override def +(edge: TypedEdge[V]): TypedBoard[V] = copy(edges + edge)
   override def splice(node: NodeOps[V]): TypedBoard[V] = {
@@ -31,8 +32,11 @@ final case class TypedBoard[V](edges: Set[TypedEdge[V]]) extends TypedBoardOps[V
     condition: Condition): Option[TypedRoute[V]] =
     searcher.search(this.asInstanceOf[searcher.B], from, to, condition.asInstanceOf[searcher.Condition])
       .map(_.asInstanceOf[R])
-  def routeV(searcher: SearchOps[NodeOps[V]], from: V, to: V, condition: Condition = _ => true): Option[TypedRouteOps[V]] =
+  def routeV(searcher: SearchOps[NodeOps[V]], from: V, to: V, condition: Condition = _ => true): Option[TypedRoute[V]] =
     route(searcher, Node(from), Node(to), condition)
+  def map[T](f: E => TypedEdge[T]): TypedBoard[T] = TypedBoard(edges.map(f))
+  override def filter(f: E => Boolean): This = copy(edges.filter(f))
+  def filterN(f: Node[V] => Boolean): This = nodesV.foldLeft(this)(_.splice(_))
 }
 object TypedBoard {
   def empty[V] = TypedBoard(Set.empty[TypedEdge[V]])
@@ -41,6 +45,9 @@ object TypedBoard {
 final case class TypedEdge[V](from: Node[V], to: Node[V]) extends TypedEdgeOps[V] {
   override type This = TypedEdge[V]
   override def flipped: TypedEdge[V] = copy(to, from)
+  def fromV: V = from.value
+  def toV: V = to.value
+  def map[T](f: Node[V] => Node[T]): TypedEdge[T] = TypedEdge(f(from), f(to))
 }
 object TypedEdge {
   implicit def gen[V](from: V, to: V): TypedEdge[V] = apply(from, to)
