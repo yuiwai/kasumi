@@ -1,6 +1,6 @@
 package com.yuiwai.kasumi.cli
 
-import com.yuiwai.kasumi.core.implementation.{BFS, Node, TypedEdge}
+import com.yuiwai.kasumi.core.implementation.{BFS, Node}
 import com.yuiwai.kasumi.examples.stations._
 
 import scala.util.chaining._
