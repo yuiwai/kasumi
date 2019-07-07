@@ -1,5 +1,6 @@
 package com.yuiwai.kasumi.core.implementation
 
+import com.yuiwai.kasumi.core.implementation.Layer.Id
 import utest._
 
 object LayerSpec extends TestSuite {
@@ -20,6 +21,15 @@ object LayerSpec extends TestSuite {
       byEdge(Edge(2, 3)) ==> Some(5)
       byEdge(Edge(2, 4)) ==> Some(8)
       byEdge(Edge(1, 3)) ==> Some(9)
+    }
+    "route" - {
+      val byRouteN: Route => Id[Seq[Option[String]]] = Layer.byRouteN(nodeLayer)
+      byRouteN(board.route(BFS, Node(1), Node(2)).get) ==> Seq(Some("Foo"), Some("Bar"))
+      byRouteN(board.route(BFS, Node(1), Node(4)).get) ==> Seq(Some("Foo"), Some("Bar"), None)
+
+      val byRouteE: Route => Id[Seq[Option[Int]]] = Layer.byRouteE(edgeLayer)
+      byRouteE(board.route(BFS, Node(1), Node(2)).get) ==> Seq(Some(10))
+      byRouteE(board.route(BFS, Node(1), Node(4)).get) ==> Seq(Some(10), Some(8))
     }
   }
 }
