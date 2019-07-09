@@ -1,6 +1,6 @@
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
-version in ThisBuild := "0.1.0"
+version in ThisBuild := "0.2.0-SNAPSHOT"
 scalaVersion in ThisBuild := "2.13.0"
 scalacOptions ++= Seq("-feature")
 organization in ThisBuild := "com.yuiwai"
