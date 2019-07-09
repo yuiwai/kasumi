@@ -4,7 +4,7 @@ import utest._
 
 object CircuitSpec extends TestSuite {
   val tests = Tests {
-    val circuit = Circuit(Board.empty, Broker.empty, Seq.empty)
+    val circuit = Circuit(Board.empty, Broker.empty, InMemoryNodeLayer(Map.empty), InMemoryEdgeLayer(Map.empty))
     "properties" - {
       "empty Circuit" - {
         circuit.nodes.size ==> 0
