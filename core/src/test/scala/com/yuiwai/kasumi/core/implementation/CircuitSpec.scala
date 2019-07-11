@@ -1,6 +1,5 @@
 package com.yuiwai.kasumi.core.implementation
 
-import com.yuiwai.kasumi.core.concept.Expression
 import utest._
 
 object CircuitSpec extends TestSuite {
