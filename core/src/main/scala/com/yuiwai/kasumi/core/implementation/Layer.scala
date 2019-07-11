@@ -1,29 +1,40 @@
 package com.yuiwai.kasumi.core.implementation
 
 import com.yuiwai.kasumi.core.concept.{EdgeLayerOps, NodeLayerOps}
+import com.yuiwai.kasumi.core.implementation.Layer.Id
 
 import scala.language.higherKinds
 
 object Layer {
   type Id[T] = T
-  def byNode[F[_]](nodeLayer: NodeLayerOps[F])(node: Node[_]): F[Option[nodeLayer.Data]] = nodeLayer.find(node.asInstanceOf[nodeLayer.K])
-  def byEdge[F[_]](edgeLayer: EdgeLayerOps[F])(edge: Edge): F[Option[edgeLayer.Data]] = edgeLayer.find(edge.asInstanceOf[edgeLayer.K])
-  def byRouteN[F[_] : Applicative](nodeLayer: NodeLayerOps[F])(route: Route)
-    (implicit T: Traverse[Seq]): F[Seq[Option[nodeLayer.Data]]] =
+  def byNode[F[_], T](nodeLayer: NodeLayerOps[F, T])(node: Node[_]): F[Option[T]] = nodeLayer.find(node.asInstanceOf[nodeLayer.K])
+  def byEdge[F[_], T](edgeLayer: EdgeLayerOps[F, T])(edge: Edge): F[Option[T]] = edgeLayer.find(edge.asInstanceOf[edgeLayer.K])
+  def byRouteN[F[_] : Applicative, T](nodeLayer: NodeLayerOps[F, T])(route: Route)
+    (implicit T: Traverse[Seq]): F[Seq[Option[T]]] =
     T.traverse(route.nodes)(byNode(nodeLayer)(_))
-  def byRouteE[F[_] : Applicative](edgeLayer: EdgeLayerOps[F])(route: Route)
-    (implicit T: Traverse[Seq]): F[Seq[Option[edgeLayer.Data]]] =
+  def byRouteE[F[_] : Applicative, T](edgeLayer: EdgeLayerOps[F, T])(route: Route)
+    (implicit T: Traverse[Seq]): F[Seq[Option[T]]] =
     T.traverse(route.edges)(byEdge(edgeLayer)(_))
 }
-final case class InMemoryNodeLayer[T](data: Map[Node[_], T]) extends NodeLayerOps[Layer.Id] {
-  override type Data = T
+final case class InMemoryNodeLayer[T](dataMap: Map[Node[_], T]) extends NodeLayerOps[Layer.Id, T] {
+  override type This = InMemoryNodeLayer[T]
   override type K = Node[_]
-  override def find(node: Node[_]): Option[T] = data.get(node)
+  override def find(node: Node[_]): Id[Option[T]] = dataMap.get(node)
+  override def findMap[R](node: Node[_])(f: T => Option[R]): Id[Option[R]] = dataMap.get(node).flatMap(f)
+  override def put(node: Node[_], data: T): InMemoryNodeLayer[T] = copy(dataMap.updated(node, data))
 }
-final case class InMemoryEdgeLayer[T](data: Map[Edge, T]) extends EdgeLayerOps[Layer.Id] {
-  override type Data = T
+object InMemoryNodeLayer {
+  def empty[T] = apply(Map.empty[Node[_], T])
+}
+final case class InMemoryEdgeLayer[T](dataMap: Map[Edge, T]) extends EdgeLayerOps[Layer.Id, T] {
+  override type This = InMemoryEdgeLayer[T]
   override type K = Edge
-  override def find(edge: Edge): Option[T] = data.get(edge)
+  override def find(edge: Edge): Id[Option[T]] = dataMap.get(edge)
+  override def findMap[R](edge: Edge)(f: T => Option[R]): Id[Option[R]] = dataMap.get(edge).flatMap(f)
+  override def put(edge: Edge, data: T): InMemoryEdgeLayer[T] = copy(dataMap.updated(edge, data))
+}
+object InMemoryEdgeLayer {
+  def empty[T] = apply(Map.empty[Edge, T])
 }
 
 trait Apply[F[_]] {
