@@ -7,11 +7,11 @@ object BrokerSpec extends TestSuite {
     val broker = Broker.empty
     "add payload" - {
       "once" - {
-        (broker + Payload.reached())
+        (broker + Payload.reached(1))
           .size ==> 1
       }
       "twice" - {
-        (broker + Payload.reached() + Payload.reached())
+        (broker + Payload.reached(1) + Payload.reached(1))
           .size ==> 2
       }
     }
@@ -20,7 +20,7 @@ object BrokerSpec extends TestSuite {
         broker.update().size ==> 0
       }
       "reached" - {
-        (broker + Payload.reached())
+        (broker + Payload.reached(1))
           .update()
           .size ==> 0
       }
@@ -33,7 +33,7 @@ object BrokerSpec extends TestSuite {
     "modifier" - {
       "reached" - {
         var received = false
-        val b = (broker + Payload.reached())
+        val b = (broker + Payload.reached(1))
           .update { _ => received = true; Seq.empty }
         received ==> true
         b.size ==> 0
