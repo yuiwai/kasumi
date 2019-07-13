@@ -9,7 +9,8 @@ final case class Board(edges: Set[Edge]) extends BoardOps[Node[_]] {
   override type E = Edge
   override type R = Route
   override def nodes: Set[Node[_]] = edges.flatMap(_.nodes)
-  override def remapFilter(f: Edge => Option[Edge]): Board = Board(edges.flatMap(f))
+  override def remapFilter(f: Edge => Option[Edge]): Board =
+    Board(edges.flatMap(f.andThen(_.toList))) // for scala-2.12
   override def +(edge: Edge): Board = copy(edges + edge)
   override def filter(f: Edge => Boolean): Board = copy(edges.filter(f))
   def splice(value: Node[_]): Board = {
