@@ -55,6 +55,17 @@ object Applicative {
     override def ap[A, B](f: Id[A => B])(fa: Id[A]): Id[B] = f(fa)
   }
 }
+trait Monad[F[_]] extends Applicative[F] {
+  def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+}
+object Monad {
+  import Layer.Id
+  implicit val idMonad = new Monad[Id] {
+    override def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
+    override def pure[T](value: T): Id[T] = value
+    override def ap[A, B](f: Id[A => B])(fa: Id[A]): Id[B] = f(fa)
+  }
+}
 trait Traverse[F[_]] {
   def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
 }
@@ -65,6 +76,15 @@ object Traverse {
       fa.foldLeft(applicative.pure(Seq.empty[B])) {
         (acc, a) =>
           applicative.map2(acc, f(a))(_ :+ _)
+      }
+    }
+  }
+  implicit val setTraverse: Traverse[Set] = new Traverse[Set] {
+    override def traverse[G[_] : Applicative, A, B](fa: Set[A])(f: A => G[B]): G[Set[B]] = {
+      val applicative = implicitly[Applicative[G]]
+      fa.foldLeft(applicative.pure(Set.empty[B])) {
+        (acc, a) =>
+          applicative.map2(acc, f(a))(_ + _)
       }
     }
   }

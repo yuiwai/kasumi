@@ -8,6 +8,7 @@ trait BoardOps[N <: NodeOps[_]] {
   type Condition = E => Boolean
   def nodes: Set[N]
   def edges: Set[E]
+  def edgesFrom(node: N): Set[E] = edges.filter(_.from == node)
   def remapFilter(f: E => Option[E]): This
   def filter(f: E => Boolean): This
   def +(edge: E): This

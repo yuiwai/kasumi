@@ -15,6 +15,11 @@ object BoardSpec extends TestSuite {
       b.edges.size ==> 2
       b.nodes.size ==> 2
     }
+    "edgesFrom" - {
+      board ~ (0, 1) ~ (1, 2) tap {
+        _.edgesFrom(Node(1)) ==> Set(Edge(1, 2), Edge(1, 0))
+      }
+    }
     "filter" - {
       board ~ (0, 1) + (1, 2) + (1, 3) tap {
         _.filter(_.from.value != 1).edges ==> Set(Edge(0, 1))

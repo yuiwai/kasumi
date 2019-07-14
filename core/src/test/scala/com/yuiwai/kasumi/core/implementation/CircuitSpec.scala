@@ -4,9 +4,9 @@ import utest._
 
 object CircuitSpec extends TestSuite {
   val tests = Tests {
-    val c0 = Circuit.empty(InMemoryNodeLayer.empty, InMemoryEdgeLayer.empty)
+    val c0 = Circuit.empty(InMemoryNodeLayer.empty, InMemoryEdgeLayer.empty, InMemoryNodeLayer.empty)
     val board = Board.empty + (1, 2) + (2, 3) + (3, 4)
-    val c1 = Circuit(board, Broker.empty, InMemoryNodeLayer(Map.empty), InMemoryEdgeLayer(Map.empty))
+    val c1 = Circuit(board, Current.empty, InMemoryNodeLayer.empty, InMemoryEdgeLayer.empty, InMemoryNodeLayer.empty)
     "properties" - {
       "empty Circuit" - {
         c0.nodes.size ==> 0
@@ -19,7 +19,7 @@ object CircuitSpec extends TestSuite {
     }
     "build and eval" - {
       val c = c1
-        .putExpr(Node(1), (i: Int) => i + 1)
+        .putCalc(Node(1), (i: Int) => i + 1)
         .putCond(Edge(1, 2), (_: Int) % 2 == 0)
 
       c.eval(Node(1), 10) ==> Some(11)
@@ -31,6 +31,14 @@ object CircuitSpec extends TestSuite {
       c.eval(Edge(1, 2), "foo") ==> Some(false)
       c.eval(Edge(0, 1), 11) ==> None
     }
+    "current/particle" - {
+      val c = c1
+        .putCalc(Node(1), (i: Int) => i + 1)
+        .putCond(Edge(1, 2), (_: Int) % 2 == 0)
+
+      c.putData(Node(1), 1).current.size ==> 1
+      c.putData(Node(1), 2).current.size ==> 0
+    }
     "components" - {
       "generator" - {
       }
@@ -40,7 +48,8 @@ object CircuitSpec extends TestSuite {
     }
     "update" - {
       "empty Circuit" - {
-        val c = c1.update()
+        c1.update() ==> c1
+        // c1.putGen()
       }
     }
   }
