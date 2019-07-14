@@ -2,6 +2,8 @@ package com.yuiwai.kasumi.core.implementation
 
 import utest._
 
+import scala.util.chaining._
+
 object CircuitSpec extends TestSuite {
   val tests = Tests {
     val c0 = Circuit.empty(InMemoryNodeLayer.empty, InMemoryEdgeLayer.empty, InMemoryNodeLayer.empty)
@@ -59,15 +61,34 @@ object CircuitSpec extends TestSuite {
     }
     "components" - {
       "generator" - {
+        "single generator" - {
+          val c = c1.putGen(Node(1), Generator(ReadyOnceSwitch, () => Seq(1)))
+          c.generated().current.size ==> 1
+        }
+        "multiple generator" - {
+          val c = c1.putGen(Node(1), Generator(ReadyOnceSwitch, () => Seq(1, 2, 3)))
+          c.generated().current.size ==> 3
+        }
       }
-      "emitter" - {
-
+      "reducer" - {
       }
     }
     "update" - {
       "empty Circuit" - {
-        c1.update() ==> c1
-        // c1.putGen()
+        c1.updated() ==> c1
+        c1.putData(Node(1), 1).updated().current.particles.head.tap { p =>
+          p.value ==> 1
+          p.pos ==> Edge(2, 3)
+        }
+        c1.putData(Node(1), 1).updated().updated().current.particles.head.tap { p =>
+          p.value ==> 1
+          p.pos ==> Edge(3, 4)
+        }
+      }
+      "with generator" - {
+        val c = c1.putGen(Node(1), Generator(ReadyOnceSwitch, () => Seq(1)))
+        c.updated().current.size ==> 1
+        c.updated().current.size ==> 1
       }
     }
   }

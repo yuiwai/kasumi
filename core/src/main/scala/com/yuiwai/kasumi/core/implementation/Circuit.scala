@@ -14,6 +14,9 @@ case class Circuit[F[_]](
   generatorLayer: NodeLayerOps[F, GeneratorOps[_]])
   (implicit F: Monad[F], T: Traverse[Set])
   extends CircuitOps[F, Circuit[F], Board] {
+  override def putGen(node: NodeOps[_], generator: GeneratorOps[_]): Circuit[F] =
+    copy(generatorLayer = generatorLayer.put(node.asInstanceOf[generatorLayer.K], generator)
+      .asInstanceOf[NodeLayerOps[F, GeneratorOps[_]]])
   override def putCalc[P, R](node: NodeOps[_], expr: Calculation[P, R]): Circuit[F] =
     copy(nodeLayer = nodeLayer.put(node.asInstanceOf[nodeLayer.K], expr).asInstanceOf[NodeLayerOps[F, Calculation[_, _]]])
   override def putCond[P](edge: EdgeOps[_], cond: Condition[P]): Circuit[F] =
@@ -34,7 +37,7 @@ case class Circuit[F[_]](
         F.map(x._2)(_.fold(x._1 -> true)(x._1 -> _))
       }) { xs =>
       xs.foldLeft(current) { case (acc, (e, b)) =>
-        if (b) acc.copy(current.particles :+ Particle(data, e))
+        if (b) acc.copy(Particle(data, e) +: current.particles)
         else acc
       }.pipe(crr => copy(current = crr))
     }
@@ -50,7 +53,19 @@ case class Circuit[F[_]](
       case _ => None
     }
   }.getOrElse(implicitly[Applicative[F]].pure(Some(false)))
-  override def update(): Circuit[F] = this
+  override def generated(): F[Circuit[F]] = F.flatMap(generatorLayer.all)(_.foldLeft(F.pure(this)) {
+    case (acc, (node, gen)) =>
+      val (newGen, newValues) = gen.update
+      F.map(acc)(_.putGen(node, newGen))
+        .pipe(c => newValues.foldLeft(c) {
+          case (x, d) => F.flatMap(x)(_.putData(node, d))
+        })
+  })
+  override def updated(): F[Circuit[F]] = F.flatMap(generated())(_.particlesUpdated())
+  private def particlesUpdated(): F[Circuit[F]] =
+    current.particles.foldLeft(F.pure(copy(current = Current.empty))) { case (acc, p) =>
+      F.flatMap(acc)(_.putData(p.pos.to.asInstanceOf[NodeOps[_]], p.value))
+    }
 }
 
 final case class Current(particles: Seq[Particle]) extends CurrentOps

@@ -5,6 +5,7 @@ import scala.language.higherKinds
 sealed trait LayerOps[F[_], T] {
   type This
   type K
+  def all: F[Seq[(K, T)]]
   def find(key: K): F[Option[T]]
   def findMap[R](key: K)(f: T => Option[R]): F[Option[R]]
   def put(key: K, data: T): This

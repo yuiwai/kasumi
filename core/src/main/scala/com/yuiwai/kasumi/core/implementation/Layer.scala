@@ -19,6 +19,7 @@ object Layer {
 final case class InMemoryNodeLayer[T](dataMap: Map[Node[_], T]) extends NodeLayerOps[Layer.Id, T] {
   override type This = InMemoryNodeLayer[T]
   override type K = Node[_]
+  override def all: Id[Seq[(Node[_], T)]] = dataMap.toSeq
   override def find(node: Node[_]): Id[Option[T]] = dataMap.get(node)
   override def findMap[R](node: Node[_])(f: T => Option[R]): Id[Option[R]] = dataMap.get(node).flatMap(f)
   override def put(node: Node[_], data: T): InMemoryNodeLayer[T] = copy(dataMap.updated(node, data))
@@ -29,6 +30,7 @@ object InMemoryNodeLayer {
 final case class InMemoryEdgeLayer[T](dataMap: Map[Edge, T]) extends EdgeLayerOps[Layer.Id, T] {
   override type This = InMemoryEdgeLayer[T]
   override type K = Edge
+  override def all: Id[Seq[(Edge, T)]] = dataMap.toSeq
   override def find(edge: Edge): Id[Option[T]] = dataMap.get(edge)
   override def findMap[R](edge: Edge)(f: T => Option[R]): Id[Option[R]] = dataMap.get(edge).flatMap(f)
   override def put(edge: Edge, data: T): InMemoryEdgeLayer[T] = copy(dataMap.updated(edge, data))
