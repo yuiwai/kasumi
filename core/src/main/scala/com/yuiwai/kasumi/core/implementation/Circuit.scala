@@ -19,24 +19,25 @@ case class Circuit[F[_]](
   override def putCond[P](edge: EdgeOps[_], cond: Condition[P]): Circuit[F] =
     copy(edgeLayer = edgeLayer.put(edge.asInstanceOf[edgeLayer.K], cond).asInstanceOf[EdgeLayerOps[F, Condition[_]]])
   override def putData[V, R](node: NodeOps[_], data: V): F[Circuit[F]] = F.flatMap(eval[V, R](node, data)) {
-    case Some(r) =>
-      F.map(
-        T.traverse(
-          // FIXME これだと動かない
-          // board.edgesFrom(node)
-          board.edges.filter(_.from == node)
-            .map { e =>
-              e -> eval(e, r)
-            }) { x =>
-          F.map(x._2)(_.fold(x._1 -> false)(x._1 -> _))
-        }) { xs =>
-        xs.foldLeft(current) { case (acc, (e, b)) =>
-          if (b) acc.copy(current.particles :+ Particle(r, e))
-          else acc
-        }.pipe(crr => copy(current = crr))
-      }
-    case None => F.pure(this)
+    case Some(r) => putCalculatedData(node, r)
+    case None => putCalculatedData(node, data)
   }
+  private def putCalculatedData[V](node: NodeOps[_], data: V): F[Circuit[F]] =
+    F.map(
+      T.traverse(
+        // FIXME これだと動かない
+        // board.edgesFrom(node)
+        board.edges.filter(_.from == node)
+          .map { e =>
+            e -> eval(e, data)
+          }) { x =>
+        F.map(x._2)(_.fold(x._1 -> true)(x._1 -> _))
+      }) { xs =>
+      xs.foldLeft(current) { case (acc, (e, b)) =>
+        if (b) acc.copy(current.particles :+ Particle(data, e))
+        else acc
+      }.pipe(crr => copy(current = crr))
+    }
   override def eval[P, R](node: NodeOps[_], param: P): F[Option[R]] = Try {
     nodeLayer.findMap(node.asInstanceOf[nodeLayer.K]) {
       case expr: Calculation[P, R] => Some(expr.eval(param))

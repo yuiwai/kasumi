@@ -32,12 +32,30 @@ object CircuitSpec extends TestSuite {
       c.eval(Edge(0, 1), 11) ==> None
     }
     "current/particle" - {
-      val c = c1
-        .putCalc(Node(1), (i: Int) => i + 1)
-        .putCond(Edge(1, 2), (_: Int) % 2 == 0)
+      "no calculation" - {
+        val c = c1
+          .putCond(Edge(1, 2), (_: Int) % 2 == 0)
 
-      c.putData(Node(1), 1).current.size ==> 1
-      c.putData(Node(1), 2).current.size ==> 0
+        c.putData(Node(1), 1).current.size ==> 0
+        c.putData(Node(1), 2).current.size ==> 1
+      }
+
+      "no condition" - {
+        val c = c1
+          .putCalc(Node(1), (i: Int) => i + 1)
+
+        c.putData(Node(1), 1).current.size ==> 1
+        c.putData(Node(1), 2).current.size ==> 1
+      }
+
+      "calculation and condition" - {
+        val c = c1
+          .putCalc(Node(1), (i: Int) => i + 1)
+          .putCond(Edge(1, 2), (_: Int) % 2 == 0)
+
+        c.putData(Node(1), 1).current.size ==> 1
+        c.putData(Node(1), 2).current.size ==> 0
+      }
     }
     "components" - {
       "generator" - {
