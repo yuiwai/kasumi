@@ -88,7 +88,8 @@ object CircuitSpec extends TestSuite {
       "with generator" - {
         val c = c1.putGen(Node(1), Generator(ReadyOnceSwitch, () => Seq(1)))
         c.updated().current.size ==> 1
-        c.updated().current.size ==> 1
+        c.updated().updated().current.size ==> 1
+        c.updated().updated().updated().current.size ==> 0
       }
     }
   }
