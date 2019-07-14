@@ -55,11 +55,13 @@ case class Circuit[F[_]](
   }.getOrElse(implicitly[Applicative[F]].pure(Some(false)))
   override def generated(): F[Circuit[F]] = F.flatMap(generatorLayer.all)(_.foldLeft(F.pure(this)) {
     case (acc, (node, gen)) =>
-      val (newGen, newValues) = gen.update
-      F.map(acc)(_.putGen(node, newGen))
-        .pipe(c => newValues.foldLeft(c) {
-          case (x, d) => F.flatMap(x)(_.putData(node, d))
-        })
+      gen.updated() match {
+        case (newGen, newValues) =>
+          F.map(acc)(_.putGen(node, newGen))
+            .pipe(c => newValues.foldLeft(c) {
+              case (x, d) => F.flatMap(x)(_.putData(node, d))
+            })
+      }
   })
   override def updated(): F[Circuit[F]] = F.flatMap(generated())(_.particlesUpdated())
   private def particlesUpdated(): F[Circuit[F]] =

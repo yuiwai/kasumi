@@ -27,7 +27,7 @@ object ExtensionsSpec extends TestSuite {
     }
     "Generator" - {
       val g = Ex.generator(Timer(1), () => Seq(1))
-      g.update._2 ==> Seq(1)
+      g.updated._2 ==> Seq(1)
     }
   }
 }

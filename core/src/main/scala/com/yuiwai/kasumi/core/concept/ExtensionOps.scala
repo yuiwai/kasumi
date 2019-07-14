@@ -32,5 +32,5 @@ trait TimerOps extends ExtensionOps with Trigger {
 trait GeneratorOps[V] extends ExtensionOps {
   def trigger: Trigger
   def creator: () => Seq[V]
-  def update: (this.type, Seq[V])
+  def updated(): (this.type, Seq[V])
 }
