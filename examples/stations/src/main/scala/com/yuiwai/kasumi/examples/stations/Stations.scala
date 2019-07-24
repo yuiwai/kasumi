@@ -17,12 +17,25 @@ object Lines {
   val Z = Line("Z", "東京メトロ", "半蔵門線")
   val N = Line("N", "東京メトロ", "南北線")
   val F = Line("F", "東京メトロ", "副都心線")
-  val KS = Line("KS", "京成電鉄", "") // KSの下に本線、成田空港線などがナンバーの範囲で分けられている
+  val KS_1 = Line("KS", "京成電鉄", "本線")
+  val KS_2 = Line("KS", "京成電鉄", "成田空港線")
+  val KS_3 = Line("KS", "京成電鉄", "東成田線")
+  val KS_4 = Line("KS", "京成電鉄", "押上線")
+  val KS_5 = Line("KS", "京成電鉄", "金町線")
+  val KS_6 = Line("KS", "京成電鉄", "千葉線")
+  val KS_7 = Line("KS", "京成電鉄", "千原線")
   val SL = Line("SL", "新京成電鉄", "新京成線")
+  val TR = Line("TR", "東葉高速鉄道", "東葉高速線")
+  val CM_1 = Line("CM", "千葉都市モノレール", "千葉都市モノレール1号線")
+  val CM_2 = Line("CM", "千葉都市モノレール", "千葉都市モノレール2号線")
 }
 object Stations {
   import Lines._
-  final case class Station(line: Line, number: Int, name: String)
+  final case class Station(line: Set[Line], number: Int, name: String)
+  object Station {
+    def apply(line: Line, number: Int, name: String): Station = apply(Set(line), number, name)
+  }
+
   val JB01 = Station(JB, 1, "三鷹")
   val JB02 = Station(JB, 2, "吉祥寺")
   val JB03 = Station(JB, 3, "西荻窪")
@@ -135,9 +148,291 @@ object Stations {
   val H20 = Station(H, 10, "南千住")
   val H21 = Station(H, 21, "北千住")
 
-  // T C Y Z
+  val T01 = Station(T, 1, "中野")
+  val T02 = Station(T, 2, "落合")
+  val T03 = Station(T, 3, "高田馬場")
+  val T04 = Station(T, 4, "早稲田")
+  val T05 = Station(T, 5, "神楽坂")
+  val T06 = Station(T, 6, "飯田橋")
+  val T07 = Station(T, 7, "九段下")
+  val T08 = Station(T, 8, "竹橋")
+  val T09 = Station(T, 9, "大手町")
+  val T10 = Station(T, 10, "日本橋")
+  val T11 = Station(T, 11, "茅場町")
+  val T12 = Station(T, 12, "門前仲町")
+  val T13 = Station(T, 13, "木場")
+  val T14 = Station(T, 14, "東陽町")
+  val T15 = Station(T, 15, "南砂町")
+  val T16 = Station(T, 16, "西葛西")
+  val T17 = Station(T, 17, "葛西")
+  val T18 = Station(T, 18, "浦安")
+  val T19 = Station(T, 19, "南行徳")
+  val T20 = Station(T, 10, "行徳")
+  val T21 = Station(T, 21, "妙典")
+  val T22 = Station(T, 22, "原木中山")
+  val T23 = Station(T, 23, "西船橋")
 
-  val junctions: Seq[Set[Station]] = ???
+  val C01 = Station(C, 1, "代々木上原")
+  val C02 = Station(C, 2, "代々木公園")
+  val C03 = Station(C, 3, "明治神宮前")
+  val C04 = Station(C, 4, "表参道")
+  val C05 = Station(C, 5, "乃木坂")
+  val C06 = Station(C, 6, "赤坂")
+  val C07 = Station(C, 7, "国会議事堂前")
+  val C08 = Station(C, 8, "霞ヶ関")
+  val C09 = Station(C, 9, "日比谷")
+  val C10 = Station(C, 10, "二重橋前")
+  val C11 = Station(C, 11, "大手町")
+  val C12 = Station(C, 12, "新御茶ノ水")
+  val C13 = Station(C, 13, "湯島")
+  val C14 = Station(C, 14, "根津")
+  val C15 = Station(C, 15, "千駄木")
+  val C16 = Station(C, 16, "西日暮里")
+  val C17 = Station(C, 17, "町屋")
+  val C18 = Station(C, 18, "北千住")
+  val C19 = Station(C, 19, "綾瀬")
+  val C20 = Station(C, 20, "北綾瀬")
+
+  // TODO Y 有楽町線
+
+  val Z01 = Station(Z, 1, "渋谷")
+  val Z02 = Station(Z, 2, "表参道")
+  val Z03 = Station(Z, 3, "青山一丁目")
+  val Z04 = Station(Z, 4, "永田町")
+  val Z05 = Station(Z, 5, "半蔵門")
+  val Z06 = Station(Z, 6, "九段下")
+  val Z07 = Station(Z, 7, "神保町")
+  val Z08 = Station(Z, 8, "大手町")
+  val Z09 = Station(Z, 9, "三越前")
+  val Z10 = Station(Z, 10, "水天宮前")
+  val Z11 = Station(Z, 11, "清澄白河")
+  val Z12 = Station(Z, 12, "住吉")
+  val Z13 = Station(Z, 13, "錦糸町")
+  val Z14 = Station(Z, 14, "押上")
+
+  val KS01 = Station(KS_1, 1, "京成上野")
+  val KS02 = Station(KS_1, 2, "日暮里")
+  val KS03 = Station(KS_1, 3, "新三河島")
+  val KS04 = Station(KS_1, 4, "町屋")
+  val KS05 = Station(KS_1, 5, "千住大橋")
+  val KS06 = Station(KS_1, 6, "京成関屋")
+  val KS07 = Station(KS_1, 7, "堀切菖蒲園")
+  val KS08 = Station(KS_1, 8, "お花茶屋")
+  val KS09 = Station(KS_1, 9, "青砥")
+  val KS10 = Station(KS_1, 10, "京成高砂")
+  val KS11 = Station(KS_1, 11, "京成小岩")
+  val KS12 = Station(KS_1, 12, "江戸川")
+  val KS13 = Station(KS_1, 13, "国府台")
+  val KS14 = Station(KS_1, 14, "市川真間")
+  val KS15 = Station(KS_1, 15, "菅野")
+  val KS16 = Station(KS_1, 16, "京成八幡")
+  val KS17 = Station(KS_1, 17, "鬼越")
+  val KS18 = Station(KS_1, 18, "京成中山")
+  val KS19 = Station(KS_1, 19, "中山")
+  val KS20 = Station(KS_1, 20, "京成西船")
+  val KS21 = Station(KS_1, 21, "海神")
+  val KS22 = Station(KS_1, 22, "京成船橋")
+  val KS23 = Station(KS_1, 23, "大神宮下")
+  val KS24 = Station(KS_1, 24, "船橋競馬場")
+  val KS25 = Station(KS_1, 25, "谷津")
+  val KS26 = Station(Set(KS_1, KS_6), 26, "京成津田沼")
+  val KS27 = Station(KS_1, 27, "京成大久保")
+  val KS28 = Station(KS_1, 28, "実籾")
+  val KS29 = Station(KS_1, 29, "八千代台")
+  val KS30 = Station(KS_1, 30, "京成大和田")
+  val KS31 = Station(KS_1, 31, "勝田台")
+  val KS32 = Station(KS_1, 32, "志津")
+  val KS33 = Station(KS_1, 33, "ユーカリが丘")
+  val KS34 = Station(KS_1, 34, "京成臼井")
+  val KS35 = Station(KS_1, 35, "京成佐倉")
+  val KS36 = Station(KS_1, 36, "大佐倉")
+  val KS37 = Station(KS_1, 37, "京成酒々井")
+  val KS38 = Station(KS_1, 38, "宗吾参道")
+  val KS39 = Station(KS_1, 39, "公津の杜")
+  val KS40 = Station(KS_1, 30, "京成成田")
+  val KS41 = Station(KS_1, 41, "空港第2ビル")
+  val KS42 = Station(KS_1, 42, "成田空港")
+
+  val KS52 = Station(KS_6, 52, "京成幕張本郷")
+  val KS53 = Station(KS_6, 53, "京成幕張")
+  val KS54 = Station(KS_6, 54, "検見川")
+  val KS55 = Station(KS_6, 55, "京成稲毛")
+  val KS56 = Station(KS_6, 56, "みどり台")
+  val KS57 = Station(KS_6, 57, "西登戸")
+  val KS58 = Station(KS_6, 58, "新千葉")
+  val KS59 = Station(KS_6, 59, "京成千葉")
+  val KS60 = Station(KS_6, 60, "千葉中央")
+
+  val SL01 = Station(SL, 1, "松戸")
+  val SL02 = Station(SL, 2, "上本郷")
+  val SL03 = Station(SL, 3, "新松戸")
+  val SL04 = Station(SL, 4, "みのり台")
+  val SL05 = Station(SL, 5, "八柱")
+  val SL06 = Station(SL, 6, "常磐平")
+  val SL07 = Station(SL, 7, "五香")
+  val SL08 = Station(SL, 8, "元山")
+  val SL09 = Station(SL, 9, "くぬぎ山")
+  val SL10 = Station(SL, 10, "北初富")
+  val SL11 = Station(SL, 11, "新鎌ヶ谷")
+  val SL12 = Station(SL, 12, "初富")
+  val SL13 = Station(SL, 13, "鎌ヶ谷大仏")
+  val SL14 = Station(SL, 14, "二和向台")
+  val SL15 = Station(SL, 15, "三咲")
+  val SL16 = Station(SL, 16, "滝不動")
+  val SL17 = Station(SL, 17, "高根公団")
+  val SL18 = Station(SL, 18, "高根木戸")
+  val SL19 = Station(SL, 19, "北習志野")
+  val SL20 = Station(SL, 20, "習志野")
+  val SL21 = Station(SL, 21, "薬園台")
+  val SL22 = Station(SL, 22, "前原")
+  val SL23 = Station(SL, 23, "新津田沼")
+  val SL24 = Station(SL, 24, "京成津田沼")
+
+  val TR01 = Station(TR, 1, "西船橋")
+  val TR02 = Station(TR, 2, "東海神")
+  val TR03 = Station(TR, 3, "飯山満")
+  val TR04 = Station(TR, 4, "北習志野")
+  val TR05 = Station(TR, 5, "船橋日大前")
+  val TR06 = Station(TR, 6, "八千代緑が丘")
+  val TR07 = Station(TR, 7, "八千代中央")
+  val TR08 = Station(TR, 8, "村上")
+  val TR09 = Station(TR, 9, "東葉勝田台")
+
+  val CM01 = Station(Set(CM_1, CM_2), 1, "千葉みなと")
+  val CM02 = Station(Set(CM_1, CM_2), 2, "市役所前")
+  val CM03 = Station(Set(CM_1, CM_2), 3, "千葉")
+  val CM16 = Station(CM_1, 16, "栄町")
+  val CM17 = Station(CM_1, 17, "葭川公園")
+  val CM18 = Station(CM_1, 18, "県庁前")
+
+  val CM04 = Station(CM_2, 4, "千葉公園")
+  val CM05 = Station(CM_2, 5, "作草部")
+  val CM06 = Station(CM_2, 6, "天台")
+  val CM07 = Station(CM_2, 7, "穴川")
+  val CM08 = Station(CM_2, 8, "スポーツセンター")
+  val CM09 = Station(CM_2, 9, "動物公園")
+  val CM10 = Station(CM_2, 10, "みつわ台")
+  val CM11 = Station(CM_2, 11, "都賀")
+  val CM12 = Station(CM_2, 12, "桜木")
+  val CM13 = Station(CM_2, 13, "小倉台")
+  val CM14 = Station(CM_2, 14, "千城台北")
+  val CM15 = Station(CM_2, 15, "千城台")
+
+  val junctions: Seq[Set[Station]] = Seq(
+    // 中野
+    Set(JB07, T01),
+
+    // 新宿
+    Set(JB10, JY17),
+
+    // 代々木
+    Set(JB11, JY18),
+
+    // 飯田橋
+    Set(JB16, T06),
+
+    // 御茶ノ水
+    Set(JB18, C12),
+
+    // 秋葉原
+    Set(JB19, JY03, H15),
+
+    // 錦糸町
+    Set(JB22, Z13),
+
+    // 西船橋
+    Set(JB30, T23, TR01),
+
+    // 津田沼
+    Set(JB33, SL23),
+
+    // 幕張本郷
+    Set(JB34, KS52),
+
+    // 幕張
+    Set(JB35, KS53),
+
+    // 千葉
+    Set(JB39, KS59, CM03),
+
+    // 東京
+    Set(JY01, JY30, T09, C10),
+
+    // 神田
+    Set(JY02, G13),
+
+    // 御徒町
+    Set(JY04, G15, H16),
+
+    // 上野
+    Set(JY05, G16, H17, KS01),
+
+    // 日暮里
+    Set(JY07, KS02),
+
+    // 西日暮里
+    Set(JY08, C16),
+
+    // 高田馬場
+    Set(JY15, T03),
+
+    // 原宿
+    Set(JY19, C03),
+
+    // 渋谷
+    Set(JY20, G01, Z01),
+
+    // 恵比寿
+    Set(JY21, H02),
+
+    // 新橋
+    Set(JY29, G08),
+
+    // 有楽町
+    Set(JY30, H07, C09),
+
+    // 表参道
+    Set(C04, G02, Z02),
+
+    // 国会議事堂前
+    Set(C07, G06),
+
+    // 霞ヶ関
+    Set(C08, H06),
+
+    // 大手町
+    Set(C11, Z08, T09),
+
+    // 北千住
+    Set(C18, H21),
+
+    // 銀座
+    Set(H08, G09),
+
+    // 茅場町
+    Set(H12, T11),
+
+    // 水天宮前
+    Set(Z10, H13),
+
+    // 青山一丁目
+    Set(Z03, G04),
+
+    // 永田町
+    Set(Z04, G05),
+
+    // 三越前
+    Set(Z09, G12),
+
+    // 九段下
+    Set(Z06, T07),
+
+    // 日本橋
+    Set(T10, G11),
+
+    // 北習志野
+    Set(TR04, SL19)
+  )
 }
 
 object Data {
