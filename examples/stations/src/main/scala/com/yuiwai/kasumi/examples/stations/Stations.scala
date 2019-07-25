@@ -28,6 +28,10 @@ object Lines {
   val TR = Line("TR", "東葉高速鉄道", "東葉高速線")
   val CM_1 = Line("CM", "千葉都市モノレール", "千葉都市モノレール1号線")
   val CM_2 = Line("CM", "千葉都市モノレール", "千葉都市モノレール2号線")
+
+  val all = Set(
+    JB, JY, G, H, T, C, Y, Z, N, F, KS_1, KS_2, KS_3, KS_4, KS_5, KS_6, KS_7, SL, TR, CM_1, CM_2
+  )
 }
 object Stations {
   import Lines._
@@ -76,6 +80,44 @@ object Stations {
   val JB38 = Station(JB, 38, "西千葉")
   val JB39 = Station(JB, 39, "千葉")
 
+  val allJB = Set(
+    JB01,
+    JB02,
+    JB03,
+    JB04,
+    JB05,
+    JB06,
+    JB07,
+    JB08,
+    JB09,
+    JB10,
+    JB11,
+    JB12,
+    JB13,
+    JB14,
+    JB15,
+    JB16,
+    JB17,
+    JB20,
+    JB21,
+    JB22,
+    JB23,
+    JB24,
+    JB25,
+    JB26,
+    JB27,
+    JB30,
+    JB31,
+    JB32,
+    JB33,
+    JB34,
+    JB35,
+    JB36,
+    JB37,
+    JB38,
+    JB39
+  )
+
   val JY01 = Station(JY, 1, "東京")
   val JY02 = Station(JY, 2, "神田")
   val JY03 = Station(JY, 3, "秋葉原")
@@ -106,6 +148,38 @@ object Stations {
   val JY29 = Station(JY, 29, "新橋")
   val JY30 = Station(JY, 30, "有楽町")
 
+  val allJY = Set(
+    JY01,
+    JY02,
+    JY03,
+    JY04,
+    JY05,
+    JY06,
+    JY07,
+    JY08,
+    JY09,
+    JY10,
+    JY11,
+    JY12,
+    JY13,
+    JY14,
+    JY15,
+    JY16,
+    JY17,
+    JY18,
+    JY19,
+    JY20,
+    JY21,
+    JY22,
+    JY23,
+    JY24,
+    JY25,
+    JY27,
+    JY28,
+    JY29,
+    JY30
+  )
+
   val G01 = Station(G, 1, "渋谷")
   val G02 = Station(G, 2, "表参道")
   val G03 = Station(G, 3, "外苑前")
@@ -125,6 +199,28 @@ object Stations {
   val G17 = Station(G, 17, "稲荷町")
   val G18 = Station(G, 18, "田原町")
   val G19 = Station(G, 19, "浅草")
+
+  val allG = Set(
+    G01,
+    G02,
+    G03,
+    G04,
+    G05,
+    G06,
+    G07,
+    G08,
+    G09,
+    G10,
+    G11,
+    G12,
+    G13,
+    G14,
+    G15,
+    G16,
+    G17,
+    G18,
+    G19
+  )
 
   val H01 = Station(H, 1, "中目黒")
   val H02 = Station(H, 2, "恵比須")
@@ -147,6 +243,30 @@ object Stations {
   val H19 = Station(H, 19, "三ノ輪")
   val H20 = Station(H, 10, "南千住")
   val H21 = Station(H, 21, "北千住")
+
+  val allH = Set(
+    H01,
+    H02,
+    H03,
+    H04,
+    H05,
+    H06,
+    H07,
+    H08,
+    H09,
+    H10,
+    H11,
+    H12,
+    H13,
+    H14,
+    H15,
+    H16,
+    H17,
+    H18,
+    H19,
+    H20,
+    H21
+  )
 
   val T01 = Station(T, 1, "中野")
   val T02 = Station(T, 2, "落合")
@@ -172,6 +292,32 @@ object Stations {
   val T22 = Station(T, 22, "原木中山")
   val T23 = Station(T, 23, "西船橋")
 
+  val allT = Set(
+    T01,
+    T02,
+    T03,
+    T04,
+    T05,
+    T06,
+    T07,
+    T08,
+    T09,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23
+  )
+
   val C01 = Station(C, 1, "代々木上原")
   val C02 = Station(C, 2, "代々木公園")
   val C03 = Station(C, 3, "明治神宮前")
@@ -193,6 +339,29 @@ object Stations {
   val C19 = Station(C, 19, "綾瀬")
   val C20 = Station(C, 20, "北綾瀬")
 
+  val allC = Set(
+    C01,
+    C02,
+    C03,
+    C04,
+    C05,
+    C06,
+    C07,
+    C08,
+    C09,
+    C10,
+    C11,
+    C12,
+    C13,
+    C14,
+    C15,
+    C16,
+    C17,
+    C18,
+    C19,
+    C20
+  )
+
   // TODO Y 有楽町線
 
   val Z01 = Station(Z, 1, "渋谷")
@@ -209,6 +378,23 @@ object Stations {
   val Z12 = Station(Z, 12, "住吉")
   val Z13 = Station(Z, 13, "錦糸町")
   val Z14 = Station(Z, 14, "押上")
+
+  val allZ = Set(
+    Z01,
+    Z02,
+    Z03,
+    Z04,
+    Z05,
+    Z06,
+    Z07,
+    Z08,
+    Z09,
+    Z10,
+    Z11,
+    Z12,
+    Z13,
+    Z14
+  )
 
   val KS01 = Station(KS_1, 1, "京成上野")
   val KS02 = Station(KS_1, 2, "日暮里")
@@ -253,6 +439,51 @@ object Stations {
   val KS41 = Station(KS_1, 41, "空港第2ビル")
   val KS42 = Station(KS_1, 42, "成田空港")
 
+  val allKS_1 = Set(
+    KS01,
+    KS02,
+    KS03,
+    KS04,
+    KS05,
+    KS06,
+    KS07,
+    KS08,
+    KS09,
+    KS10,
+    KS11,
+    KS12,
+    KS13,
+    KS14,
+    KS15,
+    KS16,
+    KS17,
+    KS18,
+    KS19,
+    KS20,
+    KS21,
+    KS22,
+    KS23,
+    KS24,
+    KS25,
+    KS26,
+    KS27,
+    KS28,
+    KS29,
+    KS30,
+    KS31,
+    KS32,
+    KS33,
+    KS34,
+    KS35,
+    KS36,
+    KS37,
+    KS38,
+    KS39,
+    KS40,
+    KS41,
+    KS42
+  )
+
   val KS52 = Station(KS_6, 52, "京成幕張本郷")
   val KS53 = Station(KS_6, 53, "京成幕張")
   val KS54 = Station(KS_6, 54, "検見川")
@@ -262,6 +493,18 @@ object Stations {
   val KS58 = Station(KS_6, 58, "新千葉")
   val KS59 = Station(KS_6, 59, "京成千葉")
   val KS60 = Station(KS_6, 60, "千葉中央")
+
+  val allKS_6 = Set(
+    KS52,
+    KS53,
+    KS54,
+    KS55,
+    KS56,
+    KS57,
+    KS58,
+    KS59,
+    KS60
+  )
 
   val SL01 = Station(SL, 1, "松戸")
   val SL02 = Station(SL, 2, "上本郷")
@@ -288,6 +531,33 @@ object Stations {
   val SL23 = Station(SL, 23, "新津田沼")
   val SL24 = Station(SL, 24, "京成津田沼")
 
+  val allSL = Set(
+    SL01,
+    SL02,
+    SL03,
+    SL04,
+    SL05,
+    SL06,
+    SL07,
+    SL08,
+    SL09,
+    SL10,
+    SL11,
+    SL12,
+    SL13,
+    SL14,
+    SL15,
+    SL16,
+    SL17,
+    SL18,
+    SL19,
+    SL20,
+    SL21,
+    SL22,
+    SL23,
+    SL24
+  )
+
   val TR01 = Station(TR, 1, "西船橋")
   val TR02 = Station(TR, 2, "東海神")
   val TR03 = Station(TR, 3, "飯山満")
@@ -298,12 +568,33 @@ object Stations {
   val TR08 = Station(TR, 8, "村上")
   val TR09 = Station(TR, 9, "東葉勝田台")
 
+  val allTR = Set(
+    TR01,
+    TR02,
+    TR03,
+    TR04,
+    TR05,
+    TR06,
+    TR07,
+    TR08,
+    TR09
+  )
+
   val CM01 = Station(Set(CM_1, CM_2), 1, "千葉みなと")
   val CM02 = Station(Set(CM_1, CM_2), 2, "市役所前")
   val CM03 = Station(Set(CM_1, CM_2), 3, "千葉")
   val CM16 = Station(CM_1, 16, "栄町")
   val CM17 = Station(CM_1, 17, "葭川公園")
   val CM18 = Station(CM_1, 18, "県庁前")
+
+  val allCM_1 = Set(
+    CM01,
+    CM02,
+    CM03,
+    CM16,
+    CM17,
+    CM18
+  )
 
   val CM04 = Station(CM_2, 4, "千葉公園")
   val CM05 = Station(CM_2, 5, "作草部")
@@ -317,6 +608,27 @@ object Stations {
   val CM13 = Station(CM_2, 13, "小倉台")
   val CM14 = Station(CM_2, 14, "千城台北")
   val CM15 = Station(CM_2, 15, "千城台")
+
+  val allCM_2 = Set(
+    CM01,
+    CM02,
+    CM03,
+    CM04,
+    CM05,
+    CM06,
+    CM07,
+    CM08,
+    CM09,
+    CM10,
+    CM11,
+    CM12,
+    CM13,
+    CM14,
+    CM15
+  )
+
+  val all: Set[Station] =
+    allJB ++ allJY ++ allG ++ allH ++ allT ++ allC ++ allZ ++ allKS_1 ++ allKS_6 ++ allTR ++ allCM_1 ++ allCM_2
 
   val junctions: Seq[Set[Station]] = Seq(
     // 中野
