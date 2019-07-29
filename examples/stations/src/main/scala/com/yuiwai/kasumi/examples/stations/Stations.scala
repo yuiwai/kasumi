@@ -4,7 +4,6 @@ import com.yuiwai.kasumi.core.implementation._
 import scala.util.chaining._
 
 final case class Station(line: String, name: String)
-
 final case class Line(mark: String, organization: String, name: String)
 object Lines {
   val JB = Line("JB", "JR", "中央・総武線")
@@ -893,5 +892,30 @@ object Data {
           case (acc, ((l1, s1), (l2, s2))) => acc ~ (Station(l1, s1), Station(l2, s2))
         }
       }
+  }
+
+  lazy val lines2: Map[Line, List[Stations.Station]] = Lines.all.foldLeft(Map.empty[Line, List[Stations.Station]]) {
+    (acc, line) =>
+      Stations.all.filter(_.line.contains(line)).toList.sortBy(_.number).pipe(xs => acc.updated(line, xs))
+  }
+  lazy val stations2: TypedBoard[Stations.Station] = lines2.foldLeft(TypedBoard.empty[Stations.Station]) {
+    case (board, (line, sts)) =>
+      sts.sliding(2).foldLeft(board) { (acc, xs) =>
+        xs match {
+          case h :: t :: Nil => acc ~ (h, t)
+          case _ => acc
+        }
+      }.pipe { board =>
+        Stations.junctions.foldLeft(board) {
+          (acc, xs) => connectJunctions(acc, xs.toList)
+        }
+      }
+  }
+  private def connectJunctions(board: TypedBoard[Stations.Station], xs: List[Stations.Station]): TypedBoard[Stations.Station] = {
+    xs match {
+      case Nil => board
+      case _ :: Nil => board
+      case h1 :: h2 :: t => connectJunctions(board ~ (h1, h2), t)
+    }
   }
 }

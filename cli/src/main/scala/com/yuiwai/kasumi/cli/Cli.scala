@@ -7,8 +7,13 @@ import scala.util.chaining._
 
 object Cli {
   def main(args: Array[String]): Unit = {
-    noTyped()
-    typed()
+    stations2()
+    // noTyped()
+    // typed()
+  }
+
+  def stations2(): Unit = {
+    println(Data.stations2.route(BFS.typed, Node(Stations.JY01), Node(Stations.JY30)))
   }
 
   def noTyped(): Unit = {
