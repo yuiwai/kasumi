@@ -3,8 +3,11 @@ package com.yuiwai.kasumi.examples.stations
 import com.yuiwai.kasumi.core.implementation._
 import scala.util.chaining._
 
-final case class Station(line: String, name: String)
 final case class Line(mark: String, organization: String, name: String)
+final case class Station(line: Set[Line], number: Int, name: String)
+object Station {
+  def apply(line: Line, number: Int, name: String): Station = apply(Set(line), number, name)
+}
 object Lines {
   val JB = Line("JB", "JR", "中央・総武線")
   val JY = Line("JY", "JR", "山手線")
@@ -34,10 +37,6 @@ object Lines {
 }
 object Stations {
   import Lines._
-  final case class Station(line: Set[Line], number: Int, name: String)
-  object Station {
-    def apply(line: Line, number: Int, name: String): Station = apply(Set(line), number, name)
-  }
 
   val JB01 = Station(JB, 1, "三鷹")
   val JB02 = Station(JB, 2, "吉祥寺")
@@ -748,157 +747,18 @@ object Stations {
 
 object Data {
   type StrPair = (String, String)
-  val lines: Map[String, List[String]] = Map(
-    "JR中央・総武線" ->
-      List("三鷹", "吉祥寺", "西荻窪", "荻窪", "阿佐ヶ谷", "高円寺", "中野", "東中野", "大久保", "新宿", "代々木", "千駄ヶ谷",
-        "信濃町", "四谷", "市ヶ谷", "飯田橋", "水道橋", "御茶ノ水", "秋葉原", "浅草橋", "両国", "錦糸町", "亀戸", "平井",
-        "新小岩", "小岩", "市川", "本八幡", "下総中山", "西船橋", "船橋", "東船橋", "津田沼", "幕張本郷", "幕張", "新検見川",
-        "稲毛", "西千葉", "千葉"),
-    "JR山手線" ->
-      List("東京", "神田", "秋葉原", "御徒町", "上野", "鴬谷", "日暮里", "西日暮里", "田端", "駒込", "巣鴨", "大塚", "池袋",
-        "目白", "高田馬場", "新大久保", "新宿", "代々木", "原宿", "渋谷", "恵比須", "目黒", "五反田", "大崎", "品川",
-        "田町", "浜松町", "新橋", "有楽町"),
-    "東京メトロ千代田線" ->
-      List("代々木上原", "代々木公園", "明治神宮前", "表参道", "乃木坂", "赤坂", "国会議事堂前", "霞ヶ関", "日比谷", "二重橋前",
-        "大手町", "新御茶ノ水", "湯島", "根津", "千駄木", "西日暮里", "町屋", "北千住", "綾瀬", "北綾瀬"),
-    "東京メトロ日比谷線" ->
-      List("中目黒", "恵比須", "広尾", "六本木", "神谷町", "霞ヶ関", "日比谷", "銀座", "東銀座", "築地", "八丁堀", "茅場町",
-        "人形町", "小伝馬町", "秋葉原", "仲御徒町", "上野", "入谷", "三ノ輪", "南千住", "北千住"),
-    "東京メトロ銀座線" ->
-      List("渋谷", "表参道", "外苑前", "青山一丁目", "赤坂見附", "溜池山王", "虎ノ門", "新橋", "銀座", "京橋", "日本橋", "三越前",
-        "神田", "末広町", "上野広小路", "上野", "稲荷町", "田原町", "浅草"),
-    "東京メトロ半蔵門線" ->
-      List("渋谷", "表参道", "青山一丁目", "永田町", "半蔵門", "九段下", "神保町", "大手町", "三越前", "水天宮前", "清澄白河",
-        "住吉", "錦糸町", "押上"),
-    "東京メトロ東西線" ->
-      List("中野", "落合", "高田馬場", "早稲田", "神楽坂", "飯田橋", "九段下", "竹橋", "大手町", "日本橋", "茅場町", "門前仲町",
-        "木場", "東陽町", "南砂町", "西葛西", "葛西", "浦安", "南行徳", "行徳", "妙典", "原木中山", "西船橋"),
-    "東葉高速鉄道" ->
-      List("西船橋", "東海神", "飯山満", "北習志野", "船橋日大前", "八千代緑が丘", "八千代中央", "村上", "東葉勝田台"),
-    "京成本線" ->
-      List("京成上野", "日暮里", "新三河島", "町屋", "千住大橋", "京成関屋", "堀切菖蒲園", "お花茶屋", "青砥", "京成高砂",
-        "京成小岩", "江戸川", "国府台", "市川真間", "菅野", "京成八幡", "鬼越", "京成中山", "中山", "京成西船", "海神", "京成船橋",
-        "大神宮下", "船橋競馬場", "谷津", "京成津田沼", "京成大久保", "実籾", "八千代台", "京成大和田", "勝田台", "志津",
-        "ユーカリが丘", "京成臼井", "京成佐倉", "大佐倉", "京成酒々井", "宗吾参道", "公津の杜", "京成成田", "空港第2ビル", "成田空港"),
-    "新京成線" ->
-      List("松戸", "上本郷", "新松戸", "みのり台", "八柱", "常磐平", "五香", "元山", "くぬぎ山", "北初富", "新鎌ヶ谷", "初富",
-        "鎌ヶ谷大仏", "二和向台", "三咲", "滝不動", "高根公団", "高根木戸", "北習志野", "習志野", "薬園台", "前原", "新津田沼",
-        "京成津田沼"),
-    "京成千葉線" ->
-      List("京成津田沼", "京成幕張本郷", "京成幕張", "検見川", "京成稲毛", "みどり台", "西登戸", "新千葉", "京成千葉", "千葉中央"),
-    "千葉都市モノレール1号線" ->
-      List("千葉みなと", "市役所前", "千葉", "栄町", "葭川公園", "県庁前"),
-    "千葉都市モノレール2号線" ->
-      List("千葉みなと", "市役所前", "千葉", "千葉公園", "作草部", "天台", "穴川", "スポーツセンター", "動物公園", "みつわ台",
-        "都賀", "桜木", "小倉台", "千城台北", "千城台")
-  )
-  val connections: List[(StrPair, StrPair)] = List(
-    ("JR中央・総武線", "中野") -> ("東京メトロ東西線", "中野"),
-    ("JR中央・総武線", "新宿") -> ("JR山手線", "新宿"),
-    ("JR中央・総武線", "代々木") -> ("JR山手線", "代々木"),
-    ("JR中央・総武線", "飯田橋") -> ("東京メトロ東西線", "飯田橋"),
-    ("JR中央・総武線", "御茶ノ水") -> ("東京メトロ千代田線", "新御茶ノ水"),
-    ("JR中央・総武線", "秋葉原") -> ("東京メトロ日比谷線", "秋葉原"),
-    ("JR中央・総武線", "秋葉原") -> ("JR山手線", "秋葉原"),
-    ("JR中央・総武線", "錦糸町") -> ("東京メトロ半蔵門線", "錦糸町"),
-    ("JR中央・総武線", "西船橋") -> ("東京メトロ東西線", "西船橋"),
-    ("JR中央・総武線", "西船橋") -> ("東葉高速鉄道", "西船橋"),
-    ("JR中央・総武線", "津田沼") -> ("新京成線", "新津田沼"),
-    ("JR中央・総武線", "幕張本郷") -> ("京成千葉線", "京成幕張本郷"),
-    ("JR中央・総武線", "幕張") -> ("京成千葉線", "京成幕張"),
-    ("JR中央・総武線", "千葉") -> ("京成千葉線", "京成千葉"),
-    ("JR中央・総武線", "千葉") -> ("千葉都市モノレール1号線", "千葉"),
-    ("JR中央・総武線", "千葉") -> ("千葉都市モノレール2号線", "千葉"),
-    ("JR山手線", "東京") -> ("JR山手線", "有楽町"),
-    ("JR山手線", "東京") -> ("東京メトロ東西線", "大手町"),
-    ("JR山手線", "東京") -> ("東京メトロ千代田線", "二重橋前"),
-    ("JR山手線", "神田") -> ("東京メトロ銀座線", "神田"),
-    ("JR山手線", "秋葉原") -> ("東京メトロ日比谷線", "秋葉原"),
-    ("JR山手線", "御徒町") -> ("東京メトロ日比谷線", "仲御徒町"),
-    ("JR山手線", "御徒町") -> ("東京メトロ銀座線", "上野広小路"),
-    ("JR山手線", "上野") -> ("京成本線", "京成上野"),
-    ("JR山手線", "西日暮里") -> ("東京メトロ千代田線", "西日暮里"),
-    ("JR山手線", "高田馬場") -> ("東京メトロ東西線", "高田馬場"),
-    ("JR山手線", "原宿") -> ("東京メトロ千代田線", "明治神宮前"),
-    ("JR山手線", "渋谷") -> ("東京メトロ銀座線", "渋谷"),
-    ("JR山手線", "渋谷") -> ("東京メトロ半蔵門線", "渋谷"),
-    ("JR山手線", "恵比須") -> ("東京メトロ日比谷線", "恵比須"),
-    ("JR山手線", "新橋") -> ("東京メトロ銀座線", "新橋"),
-    ("JR山手線", "有楽町") -> ("東京メトロ日比谷線", "日比谷"),
-    ("JR山手線", "有楽町") -> ("東京メトロ千代田線", "日比谷"),
-    ("東京メトロ千代田線", "表参道") -> ("東京メトロ銀座線", "表参道"),
-    ("東京メトロ千代田線", "表参道") -> ("東京メトロ半蔵門線", "表参道"),
-    ("東京メトロ千代田線", "国会議事堂前") -> ("東京メトロ銀座線", "溜池山王"),
-    ("東京メトロ千代田線", "霞ヶ関") -> ("東京メトロ日比谷線", "霞ヶ関"),
-    ("東京メトロ千代田線", "日比谷") -> ("東京メトロ日比谷線", "日比谷"),
-    ("東京メトロ千代田線", "大手町") -> ("東京メトロ半蔵門線", "大手町"),
-    ("東京メトロ千代田線", "大手町") -> ("東京メトロ東西線", "大手町"),
-    ("東京メトロ千代田線", "北千住") -> ("東京メトロ日比谷線", "北千住"),
-    ("東京メトロ日比谷線", "銀座") -> ("東京メトロ銀座線", "銀座"),
-    ("東京メトロ日比谷線", "仲御徒町") -> ("東京メトロ銀座線", "上野広小路"),
-    ("東京メトロ日比谷線", "上野") -> ("東京メトロ銀座線", "上野"),
-    ("東京メトロ日比谷線", "上野") -> ("京成本線", "京成上野"),
-    ("東京メトロ日比谷線", "茅場町") -> ("東京メトロ東西線", "茅場町"),
-    ("東京メトロ銀座線", "上野") -> ("京成本線", "京成上野"),
-    ("東京メトロ半蔵門線", "水天宮前") -> ("東京メトロ日比谷線", "人形町"),
-    ("東京メトロ半蔵門線", "渋谷") -> ("東京メトロ銀座線", "渋谷"),
-    ("東京メトロ半蔵門線", "表参道") -> ("東京メトロ銀座線", "表参道"),
-    ("東京メトロ半蔵門線", "青山一丁目") -> ("東京メトロ銀座線", "青山一丁目"),
-    ("東京メトロ半蔵門線", "永田町") -> ("東京メトロ銀座線", "赤坂見附"),
-    ("東京メトロ半蔵門線", "三越前") -> ("東京メトロ銀座線", "三越前"),
-    ("東京メトロ半蔵門線", "九段下") -> ("東京メトロ東西線", "九段下"),
-    ("東京メトロ半蔵門線", "大手町") -> ("東京メトロ東西線", "大手町"),
-    ("東京メトロ東西線", "日本橋") -> ("東京メトロ銀座線", "日本橋"),
-    ("東京メトロ東西線", "西船橋") -> ("東葉高速鉄道", "西船橋"),
-    ("東葉高速鉄道", "北習志野") -> ("新京成線", "北習志野"),
-    ("京成本線", "京成津田沼") -> ("新京成線", "京成津田沼"),
-    ("京成本線", "京成津田沼") -> ("京成千葉線", "京成津田沼"),
-    ("新京成線", "京成津田沼") -> ("京成千葉線", "京成津田沼"),
-    ("京成千葉線", "京成千葉") -> ("千葉都市モノレール1号線", "千葉"),
-    ("京成千葉線", "京成千葉") -> ("千葉都市モノレール2号線", "千葉"),
-    ("千葉都市モノレール1号線", "千葉みなと") -> ("千葉都市モノレール2号線", "千葉みなと"),
-    ("千葉都市モノレール1号線", "市役所前") -> ("千葉都市モノレール2号線", "市役所前"),
-    ("千葉都市モノレール1号線", "千葉") -> ("千葉都市モノレール2号線", "千葉"),
-  )
-  def edgeOfLine(lineName: String)(edge: Edge): Boolean =
-    edge.from.value.asInstanceOf[Station].line == lineName &&
-      edge.to.value.asInstanceOf[Station].line == lineName
-  def line(name: String): Option[Route] = {
+  def line(name: String): Option[TypedRoute[Station]] = {
     implicit val searcher: BFS.type = BFS
-    lines.get(name).
-      flatMap(l => stations.route(BFS, Station(name, l.head), Station(name, l.last), edgeOfLine(name)))
-  }
-  lazy val stations: Board = lines.foldLeft(Board.empty) { case (board, (lineName, sts)) =>
-    sts.sliding(2).foldLeft(board) { (acc, xs) =>
-      xs match {
-        case h :: t :: Nil => acc ~ (Station(lineName, h), Station(lineName, t))
-        case _ => acc
-      }
-    }.pipe { board =>
-      connections.foldLeft(board) {
-        case (acc, ((l1, s1), (l2, s2))) => acc ~ (Station(l1, s1), Station(l2, s2))
-      }
-    }
-  }
-  lazy val stationsTyped: TypedBoard[Station] = lines.foldLeft(TypedBoard.empty[Station]) {
-    case (board, (lineName, sts)) =>
-      sts.sliding(2).foldLeft(board) { (acc, xs) =>
-        xs match {
-          case h :: t :: Nil => acc ~ (Station(lineName, h), Station(lineName, t))
-          case _ => acc
-        }
-      }.pipe { board =>
-        connections.foldLeft(board) {
-          case (acc, ((l1, s1), (l2, s2))) => acc ~ (Station(l1, s1), Station(l2, s2))
-        }
+    lines.find(_._1.name == name).
+      flatMap { case (_, xs) =>
+        stations.route(BFS.typed[Station], Node(xs.head), Node(xs.last))
       }
   }
-
-  lazy val lines2: Map[Line, List[Stations.Station]] = Lines.all.foldLeft(Map.empty[Line, List[Stations.Station]]) {
+  lazy val lines: Map[Line, List[Station]] = Lines.all.foldLeft(Map.empty[Line, List[Station]]) {
     (acc, line) =>
       Stations.all.filter(_.line.contains(line)).toList.sortBy(_.number).pipe(xs => acc.updated(line, xs))
   }
-  lazy val stations2: TypedBoard[Stations.Station] = lines2.foldLeft(TypedBoard.empty[Stations.Station]) {
+  lazy val stations: TypedBoard[Station] = lines.foldLeft(TypedBoard.empty[Station]) {
     case (board, (line, sts)) =>
       sts.sliding(2).foldLeft(board) { (acc, xs) =>
         xs match {
@@ -911,7 +771,7 @@ object Data {
         }
       }
   }
-  private def connectJunctions(board: TypedBoard[Stations.Station], xs: List[Stations.Station]): TypedBoard[Stations.Station] = {
+  private def connectJunctions(board: TypedBoard[Station], xs: List[Station]): TypedBoard[Station] = {
     xs match {
       case Nil => board
       case _ :: Nil => board
