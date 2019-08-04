@@ -36,6 +36,10 @@ lazy val coreJVM = core.jvm
 
 lazy val stations = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
+  .settings(
+    testFrameworks += new TestFramework("utest.runner.Framework"),
+    libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.9" % "test",
+  )
   .in(file("examples/stations"))
   .dependsOn(core)
 

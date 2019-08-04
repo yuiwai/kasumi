@@ -1,7 +1,7 @@
 package com.yuiwai.kasumi.visualize
 
 import com.yuiwai.kasumi.core.implementation.TypedBoard
-import com.yuiwai.kasumi.examples.stations.{Data, Station}
+import com.yuiwai.kasumi.examples.stations.{Data, Line, Station}
 import org.scalajs.dom
 import org.scalajs.dom.raw._
 
@@ -54,18 +54,19 @@ object View {
           """.stripMargin)
         container.appendChild(sc)
       }
-    Data.line(lineName).foreach { l =>
+    Data.lineAsRouteByName(lineName).foreach { l =>
       l.nodes.map(_.value)
         .foreach { s =>
           drawStation(
             subContainer,
             s,
+            Data.lineByName(lineName).get,
             isCurrent = stationName.getOrElse(l.from.value.name) == s.name
           )
         }
     }
   }
-  def drawStation(parent: Element, station: Station, isCurrent: Boolean = false): Unit = {
+  def drawStation(parent: Element, station: Station, line: Line, isCurrent: Boolean = false): Unit = {
     val elem = dom.document.createElement("div")
     elem.innerText = station.name
     elem.setAttribute("style",
@@ -79,7 +80,7 @@ object View {
          |""".stripMargin)
     stations.edges
       .filter { x =>
-        x.from.value == station && x.to.value.line != station.line
+        x.from.value == station && !x.to.value.line.contains(line)
       }
       .foreach { e =>
         val child = dom.document.createElement("div").asInstanceOf[HTMLElement].tap { x =>

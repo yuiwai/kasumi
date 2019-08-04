@@ -747,11 +747,17 @@ object Stations {
 
 object Data {
   type StrPair = (String, String)
-  def line(name: String): Option[TypedRoute[Station]] = {
-    implicit val searcher: BFS.type = BFS
+  def lineByName(name: String): Option[Line] = lines.keys.find(_.name == name)
+  def lineAsRouteByName(name: String): Option[TypedRoute[Station]] = {
+    def pairAsEdges(xs: List[Station], current: List[TypedEdge[Station]]): Seq[TypedEdge[Station]] = xs match {
+      case first :: second :: rest => pairAsEdges(second :: rest, TypedEdge(first, second) :: current)
+      case _ => current.reverse
+    }
     lines.find(_._1.name == name).
-      flatMap { case (_, xs) =>
-        stations.route(BFS.typed[Station], Node(xs.head), Node(xs.last))
+      flatMap {
+        case (_, first :: second :: rest) =>
+          Some(TypedRoute(TypedEdge(first, second), pairAsEdges(second :: rest, Nil)))
+        case _ => None
       }
   }
   lazy val lines: Map[Line, List[Station]] = Lines.all.foldLeft(Map.empty[Line, List[Station]]) {
@@ -775,7 +781,7 @@ object Data {
     xs match {
       case Nil => board
       case _ :: Nil => board
-      case h1 :: h2 :: t => connectJunctions(board ~ (h1, h2), t)
+      case h1 :: h2 :: t => connectJunctions(board ~ (h1, h2), h2 :: t)
     }
   }
 }
