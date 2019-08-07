@@ -24,7 +24,7 @@ object Cli {
       .filter(n => xs.edges.count(e => e.from == n) == 2)
       .pipe(_.foldLeft(xs)((acc, x) => acc.splice(x)))
 
-    val lineGraph = hubStations.remapFilter(e => Some(e.copy(e.from.value.asInstanceOf[Station].line, e.to.value.asInstanceOf[Station].line)))
+    val lineGraph = hubStations.remapFilter(e => Some(e.copy(e.from.value.asInstanceOf[Station].lines, e.to.value.asInstanceOf[Station].lines)))
       .filter(e => e.from != e.to)
 
     lineGraph

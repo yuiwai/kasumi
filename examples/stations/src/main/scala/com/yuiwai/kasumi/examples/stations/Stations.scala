@@ -4,7 +4,7 @@ import com.yuiwai.kasumi.core.implementation._
 import scala.util.chaining._
 
 final case class Line(mark: String, organization: String, name: String)
-final case class Station(line: Set[Line], number: Int, name: String)
+final case class Station(lines: Set[Line], number: Int, name: String)
 object Station {
   def apply(line: Line, number: Int, name: String): Station = apply(Set(line), number, name)
 }
@@ -762,7 +762,7 @@ object Data {
   }
   lazy val lines: Map[Line, List[Station]] = Lines.all.foldLeft(Map.empty[Line, List[Station]]) {
     (acc, line) =>
-      Stations.all.filter(_.line.contains(line)).toList.sortBy(_.number).pipe(xs => acc.updated(line, xs))
+      Stations.all.filter(_.lines.contains(line)).toList.sortBy(_.number).pipe(xs => acc.updated(line, xs))
   }
   lazy val stations: TypedBoard[Station] = lines.foldLeft(TypedBoard.empty[Station]) {
     case (board, (line, sts)) =>

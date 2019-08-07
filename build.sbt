@@ -49,8 +49,10 @@ lazy val stationsJVM = stations.jvm
 lazy val visualize = project
   .in(file("visualize"))
   .settings(
+    resolvers += "yuiwai repo" at "https://s3-us-west-2.amazonaws.com/repo.yuiwai.com",
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.7"
+      "org.scala-js" %%% "scalajs-dom" % "0.9.7",
+      "com.yuiwai" %%% "yachiyo-zio" % "0.2.2-SNAPSHOT"
     ),
     scalaJSUseMainModuleInitializer := true
   )
