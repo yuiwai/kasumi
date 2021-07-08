@@ -15,6 +15,11 @@ object TypedBoardSpec extends TestSuite {
       b.edges.size ==> 2
       b.nodes.size ==> 2
     }
+    "edgesFrom" - {
+      board ~ (0, 1) ~ (1, 2) tap {
+        _.edgesFrom(Node(1)) ==> Set(TypedEdge(1, 2), TypedEdge(1, 0))
+      }
+    }
     "filter" - {
       board ~ (0, 1) + (1, 2) + (1, 3) tap {
         _.filter(_.fromV != 1).edges ==> Set(TypedEdge(0, 1))

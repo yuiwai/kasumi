@@ -1,6 +1,6 @@
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
-version in ThisBuild := "0.1.0"
+version in ThisBuild := "0.2.0-SNAPSHOT"
 scalaVersion in ThisBuild := "2.13.0"
 scalacOptions ++= Seq("-feature")
 organization in ThisBuild := "com.yuiwai"
@@ -17,8 +17,8 @@ lazy val root = project
   .aggregate(coreJVM, coreJS)
   .settings(
     name := "kasumi",
-    publish := {},
-    publishLocal := {}
+    crossScalaVersions := Nil,
+    publish / skip := true
   )
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
@@ -26,6 +26,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .in(file("core"))
   .settings(
     name := "kasumi-core",
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.8"),
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.9" % "test",
     publishTo := Some(Resolver.file("file", file("release")))

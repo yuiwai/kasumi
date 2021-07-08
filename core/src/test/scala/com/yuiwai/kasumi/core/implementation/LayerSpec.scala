@@ -31,5 +31,21 @@ object LayerSpec extends TestSuite {
       byRouteE(board.route(BFS, Node(1), Node(2)).get) ==> Seq(Some(10))
       byRouteE(board.route(BFS, Node(1), Node(4)).get) ==> Seq(Some(10), Some(8))
     }
+    "find" - {
+      nodeLayer.find(Node(0)) ==> None
+      nodeLayer.find(Node(1)) ==> Some("Foo")
+      nodeLayer.findMap(Node(1))(i => Some(i + 1)) ==> Some("Foo1")
+
+      edgeLayer.find(Edge(0, 1)) ==> None
+      edgeLayer.find(Edge(1, 2)) ==> Some(10)
+      edgeLayer.findMap(Edge(1, 2))(i => Some(i + 1)) ==> Some(11)
+    }
+    "put" - {
+      nodeLayer.put(Node(0), "Baz")
+        .find(Node(0)) ==> Some("Baz")
+
+      edgeLayer.put(Edge(0, 1), 100)
+        .find(Edge(0, 1)) ==> Some(100)
+    }
   }
 }
